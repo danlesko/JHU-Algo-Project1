@@ -1,14 +1,13 @@
 #! /usr/local/bin/python3
 
-import sys
 import random
-import math
 
 def main():
-    numArray = read_array_from_file(sys.argv[1])
-    print(numArray)
+    #numArray = read_array_from_file(sys.argv[1])
 
-    generate_array(10)
+    numArray = generate_array(11)
+    print("The unsorted array: ")
+    print(numArray)
 
     arrayInversions = get_inv_count(numArray, len(numArray))
     print("Number of inversions in input array: " + str(arrayInversions))
@@ -17,15 +16,12 @@ def main():
     print(mergeSortArray)
 
     median = get_lower_median(mergeSortArray)
-    print("Lower median is: " + str(median))
-
-    quikArray = quick_sort(numArray, 0, len(numArray)-1)
-    print(quikArray)
+    print("Lower median is after merge: " + str(median))
 
     if len(numArray) % 2 == 0:
-        print(quickselect(numArray, int(len(numArray)/2)-1))
+        print("Lower median is after selection: " + str(selection(numArray, 0, len(numArray) - 1, int(len(numArray)/2)-1)))
     else:
-        print(quickselect(numArray, int(len(numArray)/2)))
+        print("Lower median is after selection: " + str(selection(numArray, 0, len(numArray) - 1, int(len(numArray)/2))))
 
 def read_array_from_file(filename):
     with open(filename) as f:
@@ -35,7 +31,7 @@ def read_array_from_file(filename):
     return numArray
 
 def generate_array(n):
-    print(random.sample(range(0, 20), n))
+    return random.sample(range(0, 20), n)
 
 def merge_sort(A):
     # Base case. A list of zero or one elements is sorted, by definition.
@@ -94,66 +90,47 @@ def get_lower_median(A):
     else:
         return A[int((len(A))/2)]
 
-def quick_sort(A, p, r):
-    if p < r:
-        q = partition(A, p, r, A[r])
-        quick_sort(A, p, q-1)
-        quick_sort(A, q+1, r)
+# def quick_sort(A, p, r):
+#     if p < r:
+#         q = partition(A, p, r, A[r])
+#         quick_sort(A, p, q-1)
+#         quick_sort(A, q+1, r)
+#
+#     return A
 
-    return A
+def partition(A, lo, hi, p):
+    A[lo], A[p] = A[p], A[lo]
 
-def partition(A, lo, hi, pivot):
-    i = lo-1
-    for j in range(lo, hi):
-        if A[j] <= pivot:
-            i = i + 1
-            tmp = A[i]
-            A[i] = A[j]
-            A[j] = tmp
-    tmp = A[i+1]
-    A[i+1] = A[hi]
-    A[hi] = tmp
-    return i+1
+    # partition
+    i = lo
+    for j in range(lo + 1, hi + 1):
+        if A[j] < A[lo]:
+            i += 1
+            A[i], A[j] = A[j], A[i]
 
-def quickselect(items, item_index):
+    # move pivot to correct location
+    A[i], A[lo] = A[lo], A[i]
+    return i, A
 
-    def select(lst, l, r, index):
+def selection(A, lo, hi, p):
 
-        # base case
-        if r == l:
-            return lst[l]
+    # base case, if left eqals right
+    if lo == hi:
+        return A[lo]
 
-        # choose random pivot
-        pivot_index = random.randint(l, r)
+    # choose random pivot
+    pivot_index = random.randint(lo, hi)
 
-        # move pivot to beginning of list
-        lst[l], lst[pivot_index] = lst[pivot_index], lst[l]
+    i, lst = partition(A, lo, hi, pivot_index)
 
-        # partition
-        i = l
-        for j in range(l+1, r+1):
-            if lst[j] < lst[l]:
-                i += 1
-                lst[i], lst[j] = lst[j], lst[i]
+    # recursively partition one side only
+    if p == i:
+        return lst[i]
+    elif p < i:
+        return selection(A, lo, i-1, p)
+    else:
+        return selection(A, i+1, hi, p)
 
-        # move pivot to correct location
-        lst[i], lst[l] = lst[l], lst[i]
-
-        # recursively partition one side only
-        if index == i:
-            return lst[i]
-        elif index < i:
-            return select(lst, l, i-1, index)
-        else:
-            return select(lst, i+1, r, index)
-
-    if items is None or len(items) < 1:
-        return None
-
-    if item_index < 0 or item_index > len(items) - 1:
-        raise IndexError()
-
-    return select(items, 0, len(items) - 1, item_index)
 
 if __name__ == '__main__':
     main()
