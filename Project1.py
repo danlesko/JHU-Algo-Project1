@@ -30,6 +30,7 @@ def read_array_from_file(filename):
     numArray = content[0]
     return numArray
 
+# generate random array of specified size
 def generate_array(n):
     return random.sample(range(0, 20), n)
 
@@ -74,12 +75,12 @@ def merge(left, right):
 
     return result
 
-
-def get_inv_count(arr, n):
+# count inversions here, not the best implementation but oh well
+def get_inv_count(A, n):
     inv_count = 0
     for i in range(n):
         for j in range(i + 1, n):
-            if (arr[i] > arr[j]):
+            if (A[i] > A[j]):
                 inv_count += 1
 
     return inv_count
