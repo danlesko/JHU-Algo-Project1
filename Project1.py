@@ -13,15 +13,24 @@ def main():
     print("Number of inversions in input array: " + str(arrayInversions))
 
     mergeSortArray = merge_sort(numArray)
+    print("The array sorted with merge sort: ")
     print(mergeSortArray)
 
     median = get_lower_median(mergeSortArray)
     print("Lower median is after merge: " + str(median))
 
     if len(numArray) % 2 == 0:
-        print("Lower median is after selection: " + str(selection(numArray, 0, len(numArray) - 1, int(len(numArray)/2)-1)))
+        (lowerMed, newArr) = selection(numArray, 0, len(numArray) - 1, int(len(numArray)/2)-1)
+        print("Lower median is after selection: " + str(lowerMed))
+        arrayInversions = get_inv_count(numArray, len(newArr))
+        print("Number of inversions in selection array: " + str(arrayInversions))
     else:
-        print("Lower median is after selection: " + str(selection(numArray, 0, len(numArray) - 1, int(len(numArray)/2))))
+        (lowerMed, newArr) = selection(numArray, 0, len(numArray) - 1, int(len(numArray) / 2))
+        print("Lower median is after selection: " + str(lowerMed))
+        arrayInversions = get_inv_count(numArray, len(newArr))
+        print("Number of inversions in selection array: " + str(arrayInversions))
+
+
 
 def read_array_from_file(filename):
     with open(filename) as f:
@@ -117,7 +126,7 @@ def selection(A, lo, hi, p):
 
     # base case, if left eqals right
     if lo == hi:
-        return A[lo]
+        return (A[lo], A)
 
     # choose random pivot
     pivot_index = random.randint(lo, hi)
@@ -126,11 +135,11 @@ def selection(A, lo, hi, p):
 
     # recursively partition one side only
     if p == i:
-        return lst[i]
+        return (lst[i], lst)
     elif p < i:
-        return selection(A, lo, i-1, p)
+        return selection(lst, lo, i-1, p)
     else:
-        return selection(A, i+1, hi, p)
+        return selection(lst, i+1, hi, p)
 
 
 if __name__ == '__main__':
